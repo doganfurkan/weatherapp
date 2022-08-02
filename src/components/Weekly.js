@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+// import React, { /*useContext,*/ useEffect, useState } from "react";
 import { useWeatherContext } from "../context/Context";
 
 export default function Weekly() {
-  const [day, setDay] = useState(0);
+
+  const { weatherData } = useWeatherContext();
 
   const days = [
     "Monday",
@@ -14,31 +15,12 @@ export default function Weekly() {
     "Sunday",
   ];
 
-  const saatlik = () => {
-   let icerik = [];
-   let d = new Date();
-    for (let i = 0; i < 24; i++) {
-      icerik.push( <div className="hourly">
-      <div className="hour">{(d.getHours() + i)%24}:00</div>
-      <div className="image">
-        <img src="./cloud.png" alt="asd" />
-      </div>
-      <div className="degrees">{Math.round(Math.random()*40)}°C</div>
-      <div className="wind">
-        <img src="wind.png" alt="wind" /> {" "}
-        {(Math.random()*10).toString().slice(0,4)} m/s
-      </div>
-    </div>);
-    }
-
-    return icerik;
+  const gunle = (gunum) => {
+    let datem = new Date(gunum);
+    let day = datem.getDay();
+    let cevap = days[(day + 6) %7]
+    return cevap;
   };
-
-  useEffect(() => {
-    let d = new Date();
-    setDay(d.getDay() + 1);
-  }, []);
-
   return (
     <div id="container">
       <div id="menunother">
@@ -46,7 +28,32 @@ export default function Weekly() {
         <div id="other">
           <section id="hourly">
             <div id="hourlyForecast">
-              {saatlik()}
+              {weatherData.hourly.map((item, index) => {
+                    let basla = item.dt_txt.length - 8;
+                    let lastFive = item.dt_txt.toString().substr(basla, 5);
+                    return (
+                      <div className="hourly" key={index}>
+                        <div className="hour">{lastFive}</div>
+                        <div className="image">
+                          <img
+                            src={`/icons/${item.weather[0].icon}.png`}
+                            alt="weather"
+                          />
+                        </div>
+                        <div className="degrees">
+                          {Math.round(item.main.temp)}°C
+                        </div>
+                        <div className="wind">
+                          <img
+                            src="wind.png"
+                            alt="wind"
+                            style={{ transform: `rotate(${item.wind.deg}deg)` }}
+                          />{" "}
+                          {item.wind.speed} m/s
+                        </div>
+                      </div>
+                    );
+                  })}
             </div>
           </section>
         </div>
@@ -55,54 +62,25 @@ export default function Weekly() {
       <div className="heading">Daily Forecast for Next Week</div>
 
       <div id="weekly">
-        <div className="weekly">
-          <div className="day">Tomorrow</div>
-          <div className="derece">25°C</div>
-          <div className="durum">Cloudy</div>
-          <div className="img">
-            <img src="./clouds.png" alt="sadd" />
-          </div>
-        </div>
-        <div className="weekly">
-          <div className="day">{days[day]}</div>
-          <div className="derece">25°C</div>
-          <div className="durum">Cloudy</div>
-          <div className="img">
-            <img src="./clouds.png" alt="sadd" />
-          </div>
-        </div>
-        <div className="weekly">
-          <div className="day">{days[(day + 1) % 7]}</div>
-          <div className="derece">25°C</div>
-          <div className="durum">Cloudy</div>
-          <div className="img">
-            <img src="./clouds.png" alt="sadd" />
-          </div>
-        </div>
-        <div className="weekly">
-          <div className="day">{days[(day + 2) % 7]}</div>
-          <div className="derece">25°C</div>
-          <div className="durum">Cloudy</div>
-          <div className="img">
-            <img src="./clouds.png" alt="sadd" />
-          </div>
-        </div>
-        <div className="weekly">
-          <div className="day">{days[(day + 3) % 7]}</div>
-          <div className="derece">25°C</div>
-          <div className="durum">Cloudy</div>
-          <div className="img">
-            <img src="./clouds.png" alt="sadd" />
-          </div>
-        </div>
-        <div className="weekly">
-          <div className="day">{days[(day + 4) % 7]}</div>
-          <div className="derece">25°C</div>
-          <div className="durum">Cloudy</div>
-          <div className="img">
-            <img src="./clouds.png" alt="sadd" />
-          </div>
-        </div>
+        {weatherData.daily.map((item, index) => {
+              return (
+               <div className="weekly" key={index}>
+                    <div className="day">
+                      {gunle(item.dt * 1000)}
+                    </div>
+                    <div className="derece">
+                    {Math.round(item.temp)}°F
+                    </div>
+                    <div className="durum">
+                    {item.desc}
+                    </div>
+                    <div className="img">
+                      <img src={`./icons/${item.icon}.png`} alt="icon" />
+                    </div>
+                </div>
+              );
+            })
+          }
       </div>
 
       <p>Have a great day y’all! No matter how the weather is.</p>

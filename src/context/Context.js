@@ -4,17 +4,20 @@ export const GlobalContext = createContext();
 const WeatherContext = ({children}) => {
 
     const [menuOpen,setMenuopen] = useState("No Data Yet");
-    const [locater, setLocater] = useState({
-        lat:"30",
-        lon:"35",
-        city: ""
-    })
     const [weatherData, setWeatherData] = useState({
-        degrees:"",
-        description:  "",
-        feels_like: "",
-        hourly: []
+        city: "City Name",
+        degrees:"##",
+        description:  "How the weather is",
+        feels_like: "##",
+        min: "##",
+        max: "##",
+        icon: "02d",
+        lat:30,
+        lon:30,
+        hourly: [{dt_txt: "2022-08-02 ##:00 fd",main:{temp:25},weather:{"0":{icon:"01d"}},wind:{deg:45,speed:5}}],
+        daily:[{dt:1659171600,temp:25,desc:"Clear Sky",icon:"01d"},{dt:1659283600,temp:25,desc:"Clear Sky",icon:"01d"},{dt:1659371600,temp:25,desc:"Clear Sky",icon:"01d"},{dt:1659471600,temp:25,desc:"Clear Sky",icon:"01d"},{dt:1659491600,temp:25,desc:"Clear Sky",icon:"01d"},{dt:1659571600,temp:25,desc:"Clear Sky",icon:"01d"}]
     })
+    const [searched, setSearched] = useState(false)
 
     const [isLoading, setLoading] = useState("loading");
 
@@ -26,12 +29,12 @@ const WeatherContext = ({children}) => {
         setMenuopen,
         weatherData,
         setWeatherData,
-        locater,
-        setLocater,
         isLoading,
         setLoading,
         isMenuOpen,
-        setMenuOpen
+        setMenuOpen,
+        searched,
+        setSearched
     }
 
     return (
